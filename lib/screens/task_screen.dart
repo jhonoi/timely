@@ -84,13 +84,13 @@ class TaskScreen extends StatelessWidget {
                                 color: darkerColors[task.color],
                                 margin: EdgeInsets.symmetric(horizontal: 20.0)),
                             TimeStatRow(
-                                text: 'This Month', hours: task.isRunning ? ((calcMonth() + DateTime.now().difference(task.timeStarted).inSeconds)/60).floor() : (calcMonth()/60).floor(), minutes: task.isRunning ? ((calcMonth() + DateTime.now().difference(task.timeStarted).inSeconds)%60).round() : (calcMonth()%60).round()),
+                                text: 'This Month', hours: task.isRunning ? ((calcMonth() + DateTime.now().difference(task.timeStarted).inMinutes)/60).floor() : (calcMonth()/60).floor(), minutes: task.isRunning ? ((calcMonth() + DateTime.now().difference(task.timeStarted).inMinutes)%60).round() : (calcMonth()%60).round()),
                             Container(
                                 height: 1.0,
                                 color: darkerColors[task.color],
                                 margin: EdgeInsets.symmetric(horizontal: 20.0)),
                             TimeStatRow(
-                                text: 'Lifetime', hours: task.isRunning ? ((task.timeSpentLifetime + DateTime.now().difference(task.timeStarted).inSeconds)/60).floor() : (task.timeSpentLifetime/60).floor(), minutes: task.isRunning ? ((task.timeSpentLifetime + DateTime.now().difference(task.timeStarted).inSeconds)%60).round() : (task.timeSpentLifetime%60).round()),
+                                text: 'Lifetime', hours: task.isRunning ? ((task.timeSpentLifetime + DateTime.now().difference(task.timeStarted).inMinutes)/60).floor() : (task.timeSpentLifetime/60).floor(), minutes: task.isRunning ? ((task.timeSpentLifetime + DateTime.now().difference(task.timeStarted).inMinutes)%60).round() : (task.timeSpentLifetime%60).round()),
                           ],
                         ),
                       ),

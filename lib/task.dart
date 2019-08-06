@@ -30,13 +30,13 @@ class Task {
   void cancelTimer(DateTime now) {
     isRunning = false;
     timeStopped = now;
-    timeValuesList[DateTime.now().month - 1][DateTime.now().day - 1] += timeStopped.difference(timeStarted).inSeconds;
-    timeSpentLifetime += timeStopped.difference(timeStarted).inSeconds;
+    timeValuesList[DateTime.now().month - 1][DateTime.now().day - 1] += timeStopped.difference(timeStarted).inMinutes;
+    timeSpentLifetime += timeStopped.difference(timeStarted).inMinutes;
     saveList(taskArray, numOfTasks);
   }
 
   int showTime(DateTime now){
-    return timeValuesList[DateTime.now().month - 1][DateTime.now().day - 1] + DateTime.now().difference(timeStarted).inSeconds;
+    return timeValuesList[DateTime.now().month - 1][DateTime.now().day - 1] + DateTime.now().difference(timeStarted).inMinutes;
   }
 
   void saveList(List<Task> tasks, int arrSize) async {

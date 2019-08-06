@@ -152,7 +152,7 @@ class BodyContent extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 7,
+            flex: 6,
             child: Container(
               child: ListView.builder(
                 itemCount: numOfTasks,
