@@ -39,14 +39,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-//  void increaseTasks(Map data, Task task) {
-//    if (data['runTask'] == true) {
-//      setState(() {
-//        taskArray.add(task);
-//        numOfTasks++;
-//      });
-//    }
-//  }
 
   @override
   void initState() {
@@ -70,15 +62,13 @@ class _MyHomePageState extends State<MyHomePage> {
               taskName: jsonConvertedTasks[i]['taskName'],
               color: Color(jsonConvertedTasks[i]['color']),
               timeToSpend: jsonConvertedTasks[i]['timeToSpend'],
-              timeSpentToday: jsonConvertedTasks[i]['timeSpentToday'],
-              timeSpentWeek : jsonConvertedTasks[i]['timeSpentWeek'],
-              timeSpentMonth : jsonConvertedTasks[i]['timeSpentMonth'],
-              timeSpentYear : jsonConvertedTasks[i]['timeSpentYear'],
+              timeValuesList: jsonConvertedTasks[i]['timeValuesList'],
+              timeSpentLifetime : jsonConvertedTasks[i]['timeSpentLifetime'],
             )
         );
       }
-      print('numOftasks: $numOfTasks');
-      print('tasksInJson: $tasksInJson');
+//      print('numOftasks: $numOfTasks');
+//      print('tasksInJson: $tasksInJson');
     });
   }
 
@@ -162,7 +152,7 @@ class BodyContent extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 6,
+            flex: 7,
             child: Container(
               child: ListView.builder(
                 itemCount: numOfTasks,

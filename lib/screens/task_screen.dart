@@ -8,6 +8,15 @@ class TaskScreen extends StatelessWidget {
 
   TaskScreen({@required this.task});
 
+  int calcMonth(){
+    int timeSpentMonth = 0;
+    for(int i = 0; i < task.timeValuesList[DateTime.now().month - 1].length; i++){
+      timeSpentMonth += task.timeValuesList[DateTime.now().month - 1][i];
+    }
+
+    return timeSpentMonth;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,25 +64,33 @@ class TaskScreen extends StatelessWidget {
                         ),
                         child: Column(
                           children: <Widget>[
-                            TimeStatRow(text: 'Today', hours: (task.timeSpentToday/60).floor(), minutes: (task.timeSpentToday%60).round()),
+                            TimeStatRow(text: 'Today', hours: task.isRunning ? (task.showTime(DateTime.now())/60).floor() : (task.timeValuesList[DateTime.now().month - 1][DateTime.now().day - 1]/60).floor(), minutes: task.isRunning ? (task.showTime(DateTime.now())%60).round() : (task.timeValuesList[DateTime.now().month - 1][DateTime.now().day - 1]%60).round()),
+                            Container(
+                                height: 1.0,
+                                color: darkerColors[task.color],
+                                margin: EdgeInsets.symmetric(horizontal: 20.0)),
+                            /*
+                            If its the first day of January just put yesterday's value to 0 else
+                            if its the first day of any other month set yesterday's value to the last day of the previous month else
+                            just set yesterday's value to the previous index (yesterday)
+                            */
+                            TimeStatRow(
+                                text: 'Yesterday', hours: DateTime.now().day == 1 && DateTime.now().month == 1 ? 0 :
+                                            DateTime.now().day == 1 && DateTime.now().month != 1 ? (task.timeValuesList[DateTime.now().month - 2][task.timeValuesList[DateTime.now().month - 2].length - 1]/60).floor() : (task.timeValuesList[DateTime.now().month - 1][DateTime.now().day - 2]/60).floor(),
+                                minutes: DateTime.now().day == 1 && DateTime.now().month == 1 ? 0 :
+                                DateTime.now().day == 1 && DateTime.now().month != 1 ? (task.timeValuesList[DateTime.now().month - 2][task.timeValuesList[DateTime.now().month - 2].length - 1]%60).round() : (task.timeValuesList[DateTime.now().month - 1][DateTime.now().day - 2]%60).round()),
                             Container(
                                 height: 1.0,
                                 color: darkerColors[task.color],
                                 margin: EdgeInsets.symmetric(horizontal: 20.0)),
                             TimeStatRow(
-                                text: 'This Week', hours: (task.timeSpentWeek/60).floor(), minutes: (task.timeSpentWeek%60).round()),
+                                text: 'This Month', hours: task.isRunning ? ((calcMonth() + DateTime.now().difference(task.timeStarted).inSeconds)/60).floor() : (calcMonth()/60).floor(), minutes: task.isRunning ? ((calcMonth() + DateTime.now().difference(task.timeStarted).inSeconds)%60).round() : (calcMonth()%60).round()),
                             Container(
                                 height: 1.0,
                                 color: darkerColors[task.color],
                                 margin: EdgeInsets.symmetric(horizontal: 20.0)),
                             TimeStatRow(
-                                text: 'This Month', hours: (task.timeSpentMonth/60).floor(), minutes: (task.timeSpentMonth%60).round()),
-                            Container(
-                                height: 1.0,
-                                color: darkerColors[task.color],
-                                margin: EdgeInsets.symmetric(horizontal: 20.0)),
-                            TimeStatRow(
-                                text: 'Lifetime', hours: (task.timeSpentYear/60).floor(), minutes: (task.timeSpentYear%60).round()),
+                                text: 'Lifetime', hours: task.isRunning ? ((task.timeSpentLifetime + DateTime.now().difference(task.timeStarted).inSeconds)/60).floor() : (task.timeSpentLifetime/60).floor(), minutes: task.isRunning ? ((task.timeSpentLifetime + DateTime.now().difference(task.timeStarted).inSeconds)%60).round() : (task.timeSpentLifetime%60).round()),
                           ],
                         ),
                       ),
@@ -104,11 +121,9 @@ class TaskScreen extends StatelessWidget {
                       color: Color(0xFF82FCC1),
                       onPressed: (){
                         if(task.isRunning){
-                          task.isRunning = false;
-                          task.cancelTimer();
+                          task.cancelTimer(DateTime.now());
                         }else{
-                          task.isRunning = true;
-                          task.startTimer();
+                          task.startTimer(DateTime.now());
                         }
                         Navigator.pop(context);
                       },
@@ -129,11 +144,11 @@ class TaskScreen extends StatelessWidget {
                       color: Color(0xFFFF8383),
                       onPressed: (){
                         if(task.isRunning){
-                          task.isRunning = false;
-                          task.cancelTimer();
+                          task.cancelTimer(DateTime.now());
                         }
                         taskArray.removeAt(taskArray.indexOf(task));
                         numOfTasks--;
+                        task.saveList(taskArray, numOfTasks);
                         Navigator.pop(context);
                       },
                     ),
@@ -188,6 +203,64 @@ class ActionButton extends StatelessWidget {
     );
   }
 }
+
+//class TimeStatRow extends StatefulWidget {
+//  final String text;
+//
+//  TimeStatRow({@required this.text});
+//
+//  @override
+//  _TimeStatRowState createState() => _TimeStatRowState();
+//}
+//
+//
+//class _TimeStatRowState extends State<TimeStatRow> {
+//  int hours, minutes;
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return Expanded(
+//      child: Row(
+//        children: <Widget>[
+//          Expanded(
+//            child: Row(
+//              children: <Widget>[
+//                Expanded(
+//                  child: SizedBox(),
+//                ),
+//                Expanded(
+//                  flex: 4,
+//                  child: Text(
+//                    widget.text,
+//                    style: generalTextStyle.copyWith(fontSize: 21.0),
+//                  ),
+//                ),
+//              ],
+//            ),
+//          ),
+//          Expanded(
+//            child: Row(
+//              children: <Widget>[
+//                Expanded(
+//                  flex: 4,
+//                  child: Text(
+//                    hours < 1 ? '$minutes mins' : '$hours hrs $minutes mins',
+//                    textAlign: TextAlign.end,
+//                    style:
+//                    generalTextStyle.copyWith(fontWeight: FontWeight.w400, fontSize: 21.0),
+//                  ),
+//                ),
+//                Expanded(
+//                  child: SizedBox(),
+//                ),
+//              ],
+//            ),
+//          ),
+//        ],
+//      ),
+//    );
+//  }
+//}
 
 class TimeStatRow extends StatelessWidget {
   final String text;

@@ -45,11 +45,9 @@ class _TaskCardState extends State<TaskCard> {
                 onPressed: (){
                   setState(() {
                     if(widget.task.isRunning){
-                      widget.task.isRunning = false;
-                      widget.task.cancelTimer();
+                      widget.task.cancelTimer(DateTime.now());
                     }else{
-                      widget.task.isRunning = true;
-                      widget.task.startTimer();
+                      widget.task.startTimer(DateTime.now());
                     }
                   });
                 },

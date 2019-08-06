@@ -242,13 +242,24 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                                 context,
                                 Task(
                                   taskName: taskName,
-                                  color: taskColor,
+                                  color: taskColor != null ? taskColor : Color(0xFF83B4FF),
                                   timeToSpend: convertToMinutes(
                                       hours: hours, minutes: minutes),
-                                  timeSpentToday: 0,
-                                  timeSpentWeek: 0,
-                                  timeSpentMonth: 0,
-                                  timeSpentYear: 0
+                                  timeValuesList: [
+                                    List.filled(31, 0, growable: false),
+                                    List.filled(28, 0, growable: false),
+                                    List.filled(31, 0, growable: false),
+                                    List.filled(30, 0, growable: false),
+                                    List.filled(31, 0, growable: false),
+                                    List.filled(30, 0, growable: false),
+                                    List.filled(31, 0, growable: false),
+                                    List.filled(31, 0, growable: false),
+                                    List.filled(30, 0, growable: false),
+                                    List.filled(31, 0, growable: false),
+                                    List.filled(30, 0, growable: false),
+                                    List.filled(31, 0, growable: false),
+                                  ],
+                                  timeSpentLifetime: 0
                                 ),
                               );
                             },
