@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'task_storage.dart';
 import 'dart:convert';
-import 'dart:async';
 
 class Task {
   String taskName;
@@ -19,12 +18,23 @@ class Task {
     @required this.color,
     @required this.timeToSpend,
     @required this.timeValuesList,
-    this.timeSpentLifetime
+    this.timeSpentLifetime,
+    this.isRunning,
+    this.timeStarted
   });
+
+  void editTask({String editName, Color editColor}){
+    taskName = editName;
+    color = editColor;
+    saveList(taskArray, numOfTasks);
+//    print('numOftasks: $numOfTasks');
+//    print('tasksInJson: $tasksInJson');
+  }
 
   void startTimer(DateTime now) {
     isRunning = true;
     timeStarted = now;
+    saveList(taskArray, numOfTasks);
   }
 
   void cancelTimer(DateTime now) {
@@ -58,6 +68,8 @@ class Task {
       'timeToSpend': timeToSpend,
       'timeSpentLifetime': timeSpentLifetime,
       'timeValuesList': timeValuesList,
+      'isRunning': isRunning,
+      'timeStarted': timeStarted.toString()
     };
   }
 }

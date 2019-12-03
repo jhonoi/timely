@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timely/constants.dart';
 import 'package:timely/task.dart';
 import 'package:timely/task_storage.dart';
+import 'task_creation_screen.dart';
 
 class TaskScreen extends StatelessWidget {
   final Task task;
@@ -134,7 +135,7 @@ class TaskScreen extends StatelessWidget {
                       icon: Icons.edit,
                       color: Color(0xFF83B4FF),
                       onPressed: (){
-                        Navigator.pushNamed(context, '/taskCreator');
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => TaskCreationScreen(editingTask: true, task: task,)));
                       },
                     ),
                     Expanded(child: SizedBox()),
@@ -143,13 +144,35 @@ class TaskScreen extends StatelessWidget {
                       icon: Icons.delete,
                       color: Color(0xFFFF8383),
                       onPressed: (){
-                        if(task.isRunning){
-                          task.cancelTimer(DateTime.now());
-                        }
-                        taskArray.removeAt(taskArray.indexOf(task));
-                        numOfTasks--;
-                        task.saveList(taskArray, numOfTasks);
-                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: Text("Delete This Task?"),
+                              content: Text("This will permanently delete this task and along with all the data it has accumulated. Are you sure?"),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+                                FlatButton(
+                                  child: Text("Cancel"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text("Delete"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    taskArray.removeAt(taskArray.indexOf(task));
+                                    numOfTasks--;
+                                    task.saveList(taskArray, numOfTasks);
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
                   ],
@@ -203,64 +226,6 @@ class ActionButton extends StatelessWidget {
     );
   }
 }
-
-//class TimeStatRow extends StatefulWidget {
-//  final String text;
-//
-//  TimeStatRow({@required this.text});
-//
-//  @override
-//  _TimeStatRowState createState() => _TimeStatRowState();
-//}
-//
-//
-//class _TimeStatRowState extends State<TimeStatRow> {
-//  int hours, minutes;
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Expanded(
-//      child: Row(
-//        children: <Widget>[
-//          Expanded(
-//            child: Row(
-//              children: <Widget>[
-//                Expanded(
-//                  child: SizedBox(),
-//                ),
-//                Expanded(
-//                  flex: 4,
-//                  child: Text(
-//                    widget.text,
-//                    style: generalTextStyle.copyWith(fontSize: 21.0),
-//                  ),
-//                ),
-//              ],
-//            ),
-//          ),
-//          Expanded(
-//            child: Row(
-//              children: <Widget>[
-//                Expanded(
-//                  flex: 4,
-//                  child: Text(
-//                    hours < 1 ? '$minutes mins' : '$hours hrs $minutes mins',
-//                    textAlign: TextAlign.end,
-//                    style:
-//                    generalTextStyle.copyWith(fontWeight: FontWeight.w400, fontSize: 21.0),
-//                  ),
-//                ),
-//                Expanded(
-//                  child: SizedBox(),
-//                ),
-//              ],
-//            ),
-//          ),
-//        ],
-//      ),
-//    );
-//  }
-//}
 
 class TimeStatRow extends StatelessWidget {
   final String text;

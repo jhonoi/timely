@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:timely/constants.dart';
 import 'package:timely/task.dart';
+import 'package:timely/task_storage.dart';
 
 class TaskCreationScreen extends StatefulWidget {
+  final bool editingTask;
+  final Task task;
+
+  TaskCreationScreen({@required this.editingTask, this.task});
+
   @override
   _TaskCreationScreenState createState() => _TaskCreationScreenState();
 }
@@ -13,14 +19,30 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
   String taskName;
   bool beneficialTask;
   Color taskColor;
+  Color themeColor = Color(
+      0xFF83B4FF); //Color of the icon buttons and create task button. Changes when user picks a task color
+  TextEditingController controller = TextEditingController();
 
   //Converts the user's input of hours and minutes to minutes
   int convertToMinutes({int hours, int minutes}) {
     return (hours * 60) + minutes;
   }
 
-  void setTaskColor(Color color){
-    taskColor =  color;
+  void setTaskColor(Color color) {
+    taskColor = color;
+    setState(() {
+      themeColor = color;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (widget.editingTask) {
+      controller.text = widget.task.taskName;
+      themeColor = widget.task.color;
+    }
   }
 
   @override
@@ -46,12 +68,10 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                   children: <Widget>[
                     Expanded(
                       child: TextField(
+                        controller: controller,
                         decoration: InputDecoration(
                           hintText: 'Enter a task name',
                         ),
-                        onChanged: (value) {
-                          taskName = value;
-                        },
                       ),
                     ),
                     Expanded(child: SizedBox()),
@@ -66,9 +86,7 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                               style: infoTextStyle,
                             ),
                           ),
-                          Expanded(
-                            child: SizedBox()
-                          ),
+                          Expanded(child: SizedBox()),
                           Expanded(
                             flex: 8,
                             child: Row(
@@ -108,6 +126,7 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                                             children: <Widget>[
                                               RoundButton(
                                                 icon: Icons.remove,
+                                                color: themeColor,
                                                 onPressed: () {
                                                   if (hours > 0) {
                                                     setState(() {
@@ -118,6 +137,7 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                                               ),
                                               RoundButton(
                                                 icon: Icons.add,
+                                                color: themeColor,
                                                 onPressed: () {
                                                   if (hours < 24) {
                                                     setState(() {
@@ -169,6 +189,7 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                                             children: <Widget>[
                                               RoundButton(
                                                 icon: Icons.remove,
+                                                color: themeColor,
                                                 onPressed: () {
                                                   if (minutes > 0) {
                                                     setState(() {
@@ -179,6 +200,7 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                                               ),
                                               RoundButton(
                                                 icon: Icons.add,
+                                                color: themeColor,
                                                 onPressed: () {
                                                   if (minutes < 60) {
                                                     setState(() {
@@ -210,20 +232,36 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                             Expanded(
                               child: Row(
                                 children: <Widget>[
-                                  ColorDropper(color: Color(0xFF83B4FF), onPressed: setTaskColor),
-                                  ColorDropper(color: Color(0xFFFF8383), onPressed: setTaskColor),
-                                  ColorDropper(color: Color(0xFF82FCC1), onPressed: setTaskColor),
-                                  ColorDropper(color: Color(0xFF41E3DA), onPressed: setTaskColor),
+                                  ColorDropper(
+                                      color: Color(0xFF83B4FF),
+                                      onPressed: setTaskColor),
+                                  ColorDropper(
+                                      color: Color(0xFFFF8383),
+                                      onPressed: setTaskColor),
+                                  ColorDropper(
+                                      color: Color(0xFF82FCC1),
+                                      onPressed: setTaskColor),
+                                  ColorDropper(
+                                      color: Color(0xFF41E3DA),
+                                      onPressed: setTaskColor),
                                 ],
                               ),
                             ),
                             Expanded(
                               child: Row(
                                 children: <Widget>[
-                                  ColorDropper(color: Color(0xFFBD95FE), onPressed: setTaskColor),
-                                  ColorDropper(color: Color(0xFFFF82E3), onPressed: setTaskColor),
-                                  ColorDropper(color: Color(0xFFFFAB7B), onPressed: setTaskColor),
-                                  ColorDropper(color: Color(0xFFFFE175), onPressed: setTaskColor),
+                                  ColorDropper(
+                                      color: Color(0xFFBD95FE),
+                                      onPressed: setTaskColor),
+                                  ColorDropper(
+                                      color: Color(0xFFFF82E3),
+                                      onPressed: setTaskColor),
+                                  ColorDropper(
+                                      color: Color(0xFFFFAB7B),
+                                      onPressed: setTaskColor),
+                                  ColorDropper(
+                                      color: Color(0xFFFFE175),
+                                      onPressed: setTaskColor),
                                 ],
                               ),
                             )
@@ -236,32 +274,87 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                       child: Container(
                         child: Center(
                           child: FlatButton(
-                            color: Color(0xFF83B4FF),
+                            color: themeColor,
                             onPressed: () {
-                              Navigator.pop(
-                                context,
-                                Task(
-                                  taskName: taskName,
-                                  color: taskColor != null ? taskColor : Color(0xFF83B4FF),
-                                  timeToSpend: convertToMinutes(
-                                      hours: hours, minutes: minutes),
-                                  timeValuesList: [
-                                    List.filled(31, 0, growable: false),
-                                    List.filled(28, 0, growable: false),
-                                    List.filled(31, 0, growable: false),
-                                    List.filled(30, 0, growable: false),
-                                    List.filled(31, 0, growable: false),
-                                    List.filled(30, 0, growable: false),
-                                    List.filled(31, 0, growable: false),
-                                    List.filled(31, 0, growable: false),
-                                    List.filled(30, 0, growable: false),
-                                    List.filled(31, 0, growable: false),
-                                    List.filled(30, 0, growable: false),
-                                    List.filled(31, 0, growable: false),
-                                  ],
-                                  timeSpentLifetime: 0
-                                ),
-                              );
+                              bool duplicateFound = false;
+                              bool blankName = false;
+                              if(controller.text == null || controller.text == ''){
+                                blankName = true;
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                        title: Text("Task Name Required"),
+                                        content: Text('A name for the task is needed, for example Reading.'));
+                                  },
+                                );
+                              }
+                              if(!blankName){
+                                taskName = controller.text;
+                                if (widget.editingTask) {
+                                  Navigator.popUntil(
+                                      context,
+                                      ModalRoute.withName(
+                                          Navigator.defaultRouteName));
+                                  if (taskName == null || taskName == '') {
+                                    widget.task.editTask(
+                                        editColor: taskColor != null
+                                            ? taskColor
+                                            : widget.task.color);
+                                  } else {
+                                    widget.task.editTask(
+                                        editName: taskName,
+                                        editColor: taskColor != null
+                                            ? taskColor
+                                            : widget.task.color);
+                                  }
+                                } else {
+                                  for (int i = 0; i < numOfTasks; i++) {
+                                    if (controller.text == taskArray[i].taskName) {
+                                      duplicateFound = true;
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                              title: Text("Duplicate Detected"),
+                                              content: Text('A task with this name already exists. You can use another name for this task or cancel and go home.'));
+                                        },
+                                      );
+                                      break;
+                                    }
+                                  }
+                                  if(!duplicateFound){
+                                    Navigator.pop(
+                                      context,
+                                      Task(
+                                        taskName: taskName,
+                                        color: taskColor != null
+                                            ? taskColor
+                                            : Color(0xFF83B4FF),
+                                        timeToSpend: convertToMinutes(
+                                            hours: hours, minutes: minutes),
+                                        timeValuesList: [
+                                          List.filled(31, 0, growable: false),
+                                          List.filled(28, 0, growable: false),
+                                          List.filled(31, 0, growable: false),
+                                          List.filled(30, 0, growable: false),
+                                          List.filled(31, 0, growable: false),
+                                          List.filled(30, 0, growable: false),
+                                          List.filled(31, 0, growable: false),
+                                          List.filled(31, 0, growable: false),
+                                          List.filled(30, 0, growable: false),
+                                          List.filled(31, 0, growable: false),
+                                          List.filled(30, 0, growable: false),
+                                          List.filled(31, 0, growable: false),
+                                        ],
+                                        timeSpentLifetime: 0,
+                                        isRunning: false,
+                                        timeStarted: DateTime(2001),
+                                      ),
+                                    );
+                                  }
+                                }
+                              }
                             },
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -270,7 +363,9 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
                                 Icon(Icons.add, color: Colors.blue.shade50),
                                 SizedBox(width: 10.0),
                                 Text(
-                                  'Create Task',
+                                  widget.editingTask
+                                      ? 'Edit Task'
+                                      : 'Create Task',
                                   style: TextStyle(color: Colors.white),
                                 )
                               ],
@@ -294,8 +389,10 @@ class _TaskCreationScreenState extends State<TaskCreationScreen> {
 class RoundButton extends StatelessWidget {
   final IconData icon;
   final Function onPressed;
+  final Color color;
 
-  RoundButton({@required this.icon, @required this.onPressed});
+  RoundButton(
+      {@required this.icon, @required this.onPressed, @required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +409,7 @@ class RoundButton extends StatelessWidget {
       ),
       shape: CircleBorder(),
       elevation: 6.0,
-      fillColor: Color(0xFF83B4FF),
+      fillColor: color,
     );
   }
 }
@@ -329,7 +426,7 @@ class ColorDropper extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.all(10.0),
         child: RawMaterialButton(
-          onPressed: ()=> onPressed(color),
+          onPressed: () => onPressed(color),
           fillColor: color,
           shape: CircleBorder(),
           constraints: BoxConstraints.expand(),
@@ -338,4 +435,3 @@ class ColorDropper extends StatelessWidget {
     );
   }
 }
-

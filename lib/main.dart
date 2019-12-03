@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Timley',
+      title: 'Timely',
       theme: ThemeData(
         primaryColor: Color(0xFF83B4FF),
         accentColor: Color(0xFF83B4FF),
@@ -64,6 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
               timeToSpend: jsonConvertedTasks[i]['timeToSpend'],
               timeValuesList: jsonConvertedTasks[i]['timeValuesList'],
               timeSpentLifetime : jsonConvertedTasks[i]['timeSpentLifetime'],
+              isRunning: jsonConvertedTasks[i]['isRunning'],
+              timeStarted: DateTime.parse(jsonConvertedTasks[i]['timeStarted'])
             )
         );
       }
@@ -106,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          var newTask = await Navigator.push(context, MaterialPageRoute(builder: (context) => TaskCreationScreen()));
+          var newTask = await Navigator.push(context, MaterialPageRoute(builder: (context) => TaskCreationScreen(editingTask: false,)));
           if (newTask != null) {
             setState(() {
               taskArray.add(newTask);
